@@ -15,7 +15,7 @@ async function apiRequest(endpoint, options = {}) {
 
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, requestOptions);
-    
+
     if (response.status === 401 && endpoint !== '/auth/login' && endpoint !== '/auth/refresh') {
       // Token expired, try to refresh
       const refreshed = await refreshToken();
@@ -50,12 +50,16 @@ async function refreshToken() {
         return true;
       } else {
         // Refresh failed, redirect to login
-        window.location.href = '/login';
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login';
+        }
         return false;
       }
     } catch (error) {
       console.error('Token refresh error:', error);
-      window.location.href = '/login';
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
       return false;
     } finally {
       tokenRefreshPromise = null;

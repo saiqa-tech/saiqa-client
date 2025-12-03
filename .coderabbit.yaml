@@ -1,0 +1,131 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: "en-US"
+early_access: true
+tone_instructions: >-
+  Review as an assertive, constructive TypeScript React expert. Focus on correctness,
+  performance, accessibility, and design system adherence. Provide concise, actionable
+  feedback with GitHub suggestion blocks for small fixes.
+reviews:
+  profile: "assertive"
+  request_changes_workflow: true
+  high_level_summary: true
+  high_level_summary_instructions: |
+    Provide 2-3 bullet release notes that capture customer-visible behavior,
+    highlight notable risks, and note impacts on the frontend experience.
+  review_status: true
+  commit_status: true
+  fail_commit_status: true
+  collapse_walkthrough: false
+  changed_files_summary: true
+  sequence_diagrams: true
+  estimate_code_review_effort: true
+  assess_linked_issues: true
+  related_issues: true
+  related_prs: true
+  suggested_labels: true
+  suggested_reviewers: true
+  auto_assign_reviewers: false
+  in_progress_fortune: false
+  poem: false
+  path_filters:
+    - "!**/dist/**"
+    - "!**/build/**"
+    - "!**/.next/**"
+    - "!**/coverage/**"
+    - "!**/*.snap"
+    - "!**/*.lock"
+    - "!**/*.generated.*"
+    - "!**/node_modules/**"
+  path_instructions:
+    - path: "frontend-development-guide.md"
+      instructions: |
+        Cross-check changes with the documented frontend conventions and cite
+        relevant sections when suggesting adjustments.
+    - path: "src/api/**"
+      instructions: |
+        Validate API clients follow the AuthContext token lifecycle, enforce
+        timeouts, and handle non-2xx status codes. Ensure DTO typings stay in
+        sync with backend contracts.
+    - path: "src/components/**"
+      instructions: |
+        Prioritize React 18 best practices, accessibility (ARIA roles, keyboard
+        navigation, focus traps), and consistent styling. Flag expensive
+        re-renders and confirm Suspense/loading states align with TanStack Query
+        behavior.
+    - path: "src/context/**"
+      instructions: |
+        Ensure context providers avoid memory leaks and properly handle state
+        resets on logout.
+    - path: "src/utils/rbac.ts"
+      instructions: |
+        Keep authorization logic centralized, deny by default, and aligned with
+        backend RBAC contracts. Recommend test coverage when new roles or
+        permissions are introduced.
+    - path: "src/utils/validators.ts"
+      instructions: |
+        Require schema validation for any data that flows into the API.
+        Highlight missing sanitization or regex patterns that could allow
+        injection attacks.
+    - path: "src/routes/**"
+      instructions: |
+        Verify loaders and actions enforce ProtectedRoute/RoleBasedRoute guards
+        and degrade gracefully when sessions expire, including surfacing the
+        SessionTimeoutModal.
+    - path: "instrument.server.mjs"
+      instructions: |
+        Safeguard telemetry so environment secrets are never logged.
+        Confirm sampling and service names remain configurable via
+        environment variables.
+    - path: "scripts/**"
+      instructions: |
+        Require scripts to be idempotent, parameterized through environment
+        variables, and safe for CI invocation. Suggest documentation updates when
+        script behavior changes.
+  auto_review:
+    enabled: true
+    auto_incremental_review: true
+    drafts: false
+    base_branches:
+      - "main"
+      - "develop"
+      - "release/*"
+      - "hotfix/*"
+    ignore_title_keywords:
+      - "WIP"
+      - "DO NOT MERGE"
+    labels:
+      - "needs-ai-review"
+  pre_merge_checks:
+    docstrings:
+      mode: "warning"
+      threshold: 70
+    title:
+      mode: "warning"
+      requirements: "Begin with the Jira ticket (e.g., SAIQA-123) and use an imperative summary under 65 characters."
+    description:
+      mode: "error"
+    issue_assessment:
+      mode: "warning"
+    custom_checks:
+      - name: "CI status gate"
+        mode: "error"
+        instructions: |
+          Ensure GitHub checks `ci/lint`, `ci/test`, and `ci/build` (or their
+          workflow aliases) have succeeded before approval. Block the PR if any
+          required status is pending or failed.
+      - name: "Security posture"
+        mode: "warning"
+        instructions: |
+          Flag missing authentication, authorization, or input validation on new
+          routes or API calls.
+      - name: "Observability completeness"
+        mode: "warning"
+        instructions: |
+          Require new features to emit structured logs and metrics where appropriate.
+  tools:
+    github-checks:
+      enabled: true
+    markdownlint:
+      enabled: true
+chat:
+  auto_reply: true

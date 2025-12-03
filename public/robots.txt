@@ -1,3 +1,8 @@
 # https://www.robotstxt.org/robotstxt.html
+# This file blocks all search engine crawlers
+# For production deployments, consider using environment-specific robots.txt files:
+# - Production: Allow crawling (Disallow: empty or selective paths)
+# - Staging/Development: Disallow all (Disallow: /)
+# Implement via build process or CDN configuration based on deployment environment
 User-agent: *
 Disallow: /

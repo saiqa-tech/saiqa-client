@@ -19,11 +19,545 @@
 ### 1.1 Environment Configuration
 - ✅ Initialize React + TanStack Start + Ant Design 6.0 project
 - ✅ Set environment variables (API_BASE_URL, NODE_ENV)
-- ✅ Use javascript only no typescript
+- ✅ Use typescript only no javascript
 - ✅ Set up .env.example template with required variables
 - ✅ Configure CORS settings for API communication
 
-**Deliverable:** Buildable project with no errors, .env configuration working
+## File Structure & Organization
+
+### Recommended Project Layout
+
+```
+saiqa-client/
+├── src/
+│   ├── app.tsx                          # App entry point
+│   ├── routes/
+│   │   ├── __root.tsx                   # Root layout
+│   │   ├── index.lazy.tsx               # Dashboard
+│   │   ├── login.lazy.tsx               # Login page
+│   │   ├── profile.lazy.tsx             # User profile
+│   │   ├── users/
+│   │   │   ├── index.lazy.tsx           # User list
+│   │   │   ├── $id.lazy.tsx             # User detail
+│   │   │   ├── create.lazy.tsx          # Create user
+│   │   │   ├── $id.edit.lazy.tsx        # Edit user
+│   │   ├── units/
+│   │   │   ├── index.lazy.tsx           # Unit list
+│   │   │   ├── create.lazy.tsx          # Create unit
+│   │   │   ├── $id.edit.lazy.tsx        # Edit unit
+│   │   ├── designations/
+│   │   │   ├── index.lazy.tsx           # Designation list
+│   │   │   ├── create.lazy.tsx          # Create designation
+│   │   │   ├── $id.edit.lazy.tsx        # Edit designation
+│   ├── components/
+│   │   ├── ProtectedRoute.tsx           # Route protection wrapper
+│   │   ├── RoleBasedRoute.tsx           # Role-based route guard
+│   │   ├── Layout.tsx                   # App layout
+│   │   ├── Header.tsx                   # Header component
+│   │   ├── Sidebar.tsx                  # Sidebar navigation
+│   │   ├── AuthLayout.tsx               # Login page layout
+│   │   ├── LoadingSpinner.tsx           # Loading indicator
+│   │   ├── EmptyState.tsx               # Empty data state
+│   │   ├── ErrorBoundary.tsx            # Error fallback
+│   ├── context/
+│   │   ├── AuthContext.tsx              # Authentication context
+│   │   ├── AuthProvider.tsx             # Auth provider wrapper
+│   │   ├── ErrorContext.tsx             # Error notifications
+│   │   ├── ErrorProvider.tsx            # Error provider wrapper
+│   ├── hooks/
+│   │   ├── useAuth.ts                   # Auth context hook
+│   │   ├── useError.ts                  # Error context hook
+│   │   ├── useFetch.ts                  # Data fetching hook
+│   │   ├── useForm.ts                   # Form state hook
+│   ├── api/
+│   │   ├── client.ts                    # HTTP client setup
+│   │   ├── interceptors.ts              # Request/response interceptors
+│   │   ├── endpoints/
+│   │   │   ├── auth.ts                  # Auth API calls
+│   │   │   ├── users.ts                 # User API calls
+│   │   │   ├── units.ts                 # Unit API calls
+│   │   │   ├── designations.ts          # Designation API calls
+│   ├── utils/
+│   │   ├── rbac.ts                      # Role checking utilities
+│   │   ├── validators.ts                # Form validation rules
+│   │   ├── constants.ts                 # App constants
+│   │   ├── storage.ts                   # Session/localStorage helpers
+│   ├── types/
+│   │   ├── api.ts                       # API response types
+│   │   ├── auth.ts                      # Auth types
+│   │   ├── user.ts                      # User types
+│   │   ├── common.ts                    # Common types
+│   ├── styles/
+│   │   ├── globals.css                  # Global styles
+│   │   ├── theme.css                    # Ant Design overrides
+├── .env.example                         # Environment template
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+└── README.md
+```
+
+***
+
+## SAIQA Frontend Directory Structure Justification
+This is a **feature-based, scalable directory structure** designed for React + TanStack Start + Ant Design projects. It prioritizes developer experience, maintainability, and clear separation of concerns.
+
+### 1. **`src/routes/` - File-Based Routing** ✅ BEST FOR TANSTACK START
+
+**Why This Approach?**
+- TanStack Start uses **file-based routing** (like Next.js)
+- Each `.lazy.tsx` file = automatic route
+- No manual route configuration needed
+- Reduces boilerplate significantly
+- Aligns with modern React meta-frameworks
+
+**Structure Explanation:**
+
+```
+routes/
+├── __root.tsx         → "/" (root layout, wraps all routes)
+├── index.lazy.tsx     → "/" (dashboard homepage)
+├── login.lazy.tsx     → "/login" (public, no layout)
+├── profile.lazy.tsx   → "/profile" (authenticated)
+├── users/
+│   ├── index.lazy.tsx → "/users" (list)
+│   ├── $id.lazy.tsx   → "/users/:id" (detail)
+│   ├── create.lazy.tsx → "/users/create" (form)
+│   └── $id.edit.lazy.tsx → "/users/:id/edit" (edit form)
+├── units/             → "/units/*" (mirrored structure)
+└── designations/      → "/designations/*" (mirrored structure)
+```
+
+**Advantages:**
+- ✅ **Automatic routing** - no Router config files needed
+- ✅ **Intuitive** - folder structure matches URL paths
+- ✅ **Nested routes** - users/ folder = /users/... URLs
+- ✅ **Lazy loading** - .lazy.tsx = code-split by default
+- ✅ **Scalable** - add new routes by creating new files
+- ✅ **Clear organization** - each feature in its own folder
+
+**Disadvantages:**
+- ❌ File names matter (must match routes exactly)
+- ❌ Learning curve for new developers
+- ❌ Unusual naming ($id, __root) initially confusing
+
+**Why NOT use `pages/` folder?**
+- Pages pattern is for Next.js, not TanStack Start
+- TanStack Start routing is more explicit with `__root.tsx`
+- `.lazy.tsx` extension makes code-splitting intentions clear
+
+***
+
+### 2. **`src/components/` - Shared UI Components** ✅ CORRECT APPROACH
+
+**Why This Directory?**
+- Holds **reusable UI components** used across multiple routes
+- Not specific to any single feature
+- Can be imported from any route file
+- Keeps code DRY (Don't Repeat Yourself)
+
+**What Goes Here:**
+- **Layout components**: Layout.tsx, Header.tsx, Sidebar.tsx
+- **Route protection**: ProtectedRoute.tsx, RoleBasedRoute.tsx
+- **Shared utilities**: LoadingSpinner.tsx, EmptyState.tsx, ErrorBoundary.tsx
+- **AuthLayout.tsx**: Special layout for login page
+
+**What Does NOT Go Here:**
+- ❌ User-specific components (should be in routes/users/)
+- ❌ Unit-specific components (should be in routes/units/)
+- ❌ Feature-specific logic (should be co-located with route)
+
+**Why This Organization?**
+- Clear separation: shared vs feature-specific
+- Easy to find layout/shared components
+- Prevents duplication across features
+- Proper code reuse
+
+**Example Usage:**
+```
+// In routes/users/index.lazy.tsx
+import { ProtectedRoute } from '@/components/ProtectedRoute'
+import { Layout } from '@/components/Layout'
+
+export default function UserList() {
+  return (
+    <ProtectedRoute>
+      <Layout>
+        {/* User list content */}
+      </Layout>
+    </ProtectedRoute>
+  )
+}
+```
+
+***
+
+### 3. **`src/context/` - Global State Management** ✅ REACT CONTEXT BEST PRACTICE
+
+**Why Context API (not Redux)?**
+- Saiqa needs only 2 global states: Auth + Error
+- Redux adds complexity not needed
+- React Context is sufficient for this scale
+- Less boilerplate, faster development
+
+**Structure:**
+```
+context/
+├── AuthContext.tsx      → Defines auth context & interface
+├── AuthProvider.tsx     → Wraps app with auth context
+├── ErrorContext.tsx     → Defines error notifications context
+└── ErrorProvider.tsx    → Wraps app with error context
+```
+
+**Why Separate Context & Provider?**
+- **Context**: Just the interface (created with createContext)
+- **Provider**: Component that wraps app (supplies context value)
+- **Benefit**: Cleaner, more reusable, follows best practice
+- **Convention**: Makes code more professional
+
+**Usage Pattern:**
+```
+// App.tsx wraps everything
+<AuthProvider>
+  <ErrorProvider>
+    <App />
+  </ErrorProvider>
+</AuthProvider>
+
+// Any component uses it
+const { user, role } = useAuth()
+```
+
+**Why NOT use Redux?**
+- Redux is for complex, multi-level state
+- Saiqa has simple linear state (user, error)
+- Redux adds 5+ new files, boilerplate per feature
+- Context is cleaner, faster development
+
+***
+
+### 4. **`src/hooks/` - Custom React Hooks** ✅ SEPARATION OF CONCERNS
+
+**Why Extract into Hooks?**
+- Hooks encapsulate logic, make it reusable
+- Keep components focused on rendering
+- Easier to test
+- Easier to maintain
+
+**What Goes Here:**
+- `useAuth.ts` → Access auth context (role, user, login, logout)
+- `useError.ts` → Show/hide error notifications
+- `useFetch.ts` → Generic data fetching with loading/error states
+- `useForm.ts` → Form state management (optional, can use Ant Form instead)
+
+**Example Usage:**
+```
+// In any component
+const { user, logout } = useAuth()
+const { showError } = useError()
+const { data, loading, error } = useFetch('/api/users')
+```
+
+**Why NOT Inline This Logic?**
+- ❌ Duplicated in multiple components
+- ❌ Harder to test
+- ❌ Violates DRY principle
+- ❌ Makes components harder to read
+
+***
+
+### 5. **`src/api/` - API Communication Layer** ✅ ENCAPSULATION
+
+**Why Separate API Logic?**
+- Centralized HTTP client configuration
+- Request/response interceptors in one place
+- Error handling consistent across app
+- Easy to swap HTTP client (axios → fetch)
+- Easy to add authentication headers
+- Easy to handle token refresh
+
+**Structure:**
+```
+api/
+├── client.ts                → Axios instance with base config
+├── interceptors.ts          → Request/response middleware
+└── endpoints/
+    ├── auth.ts              → /api/auth/* calls
+    ├── users.ts             → /api/users/* calls
+    ├── units.ts             → /api/units/* calls
+    └── designations.ts      → /api/designations/* calls
+```
+
+**Why Organize by Endpoint?**
+- Each file groups related API calls
+- Easy to find auth vs user endpoints
+- Easy to mock for testing
+- Mirrors backend API structure
+
+**Example Usage:**
+```
+// In route
+import { loginUser, logoutUser } from '@/api/endpoints/auth'
+import { getUsers, createUser } from '@/api/endpoints/users'
+
+// Use directly
+const response = await loginUser(email, password)
+```
+
+**Why NOT Make API Calls in Components?**
+- ❌ Duplicated HTTP code across components
+- ❌ Hard to change API base URL
+- ❌ Hard to add global headers
+- ❌ Error handling inconsistent
+- ❌ Hard to test components
+
+***
+
+### 6. **`src/utils/` - Helper Functions** ✅ UTILITY EXTRACTION
+
+**Why This Directory?**
+- Holds **pure functions** that aren't components
+- Reusable across app
+- No React dependency
+- Easy to unit test
+
+**What Goes Here:**
+- `rbac.ts` → `isAdmin()`, `isManager()`, `canEditUser()`
+- `validators.ts` → Email, password, phone validation rules
+- `constants.ts` → ROLE_TYPES, API_ENDPOINTS, MESSAGES
+- `storage.ts` → `getToken()`, `setToken()`, `clearToken()`
+
+**Example Usage:**
+```
+// In component
+import { isAdmin, isManager } from '@/utils/rbac'
+import { validateEmail } from '@/utils/validators'
+
+if (isAdmin(user.role)) {
+  showDeleteButton()
+}
+
+if (!validateEmail(email)) {
+  showError('Invalid email')
+}
+```
+
+**Why NOT Inline These?**
+- ❌ Duplicated validation logic
+- ❌ Hard to change rules globally
+- ❌ Makes components harder to read
+- ❌ Harder to test
+
+***
+
+### 7. **`src/types/` - TypeScript Type Definitions** ✅ TYPE SAFETY
+
+**Why Separate Types?**
+- Centralized type definitions
+- Reusable across components
+- Easy to maintain API contracts
+- Self-documenting code
+- Enhanced IDE support with autocompletion and error checking
+
+**Structure:**
+```
+types/
+├── api.ts          → API response/request types
+├── auth.ts         → User, auth-related types
+├── user.ts         → User-specific types (UserForm, UserDetail)
+└── common.ts       → Shared types (Pagination, ErrorResponse)
+```
+
+**Example Types:**
+```typescript
+// api.ts
+export interface ApiResponse<T> {
+  data: T
+  error?: string
+  status: number
+}
+
+// auth.ts
+export interface User {
+  id: string
+  email: string
+  role: 'admin' | 'manager' | 'user'
+  firstName: string
+  lastName: string
+}
+```
+
+**Why NOT Inline Types?**
+- ❌ Repeated across files
+- ❌ Hard to maintain consistency
+- ❌ Changes require finding all usages
+- ❌ Harder to understand API contract
+
+***
+
+### 8. **`src/styles/` - Global & Theme Styles** ✅ CONSISTENT THEMING
+
+**Why Separate Styles?**
+- Global styles in one place
+- Theme overrides centralized
+- Easy to maintain design system
+- Prevents CSS conflicts
+
+**Structure:**
+```
+styles/
+├── globals.css    → Reset, base, global rules
+└── theme.css      → Ant Design overrides (colors, sizes)
+```
+
+**What Goes Here:**
+- ✅ Global reset (margin, padding, font)
+- ✅ Body, html, a tag styles
+- ✅ Ant Design customization
+- ✅ CSS variables for colors/spacing
+
+**What Does NOT Go Here:**
+- ❌ Component-specific styles (use CSS Modules or inline)
+- ❌ Feature-specific styles (keep with feature)
+
+**Why This Approach?**
+- Single source of truth for theming
+- Easy to implement dark mode
+- Consistent across entire app
+- Changes propagate globally
+
+***
+
+### 9. **Root Level Files** ✅ ESSENTIAL CONFIGURATION
+
+```
+├── .env.example       → Template for environment variables
+├── package.json       → Dependencies & scripts
+├── tsconfig.json      → TypeScript configuration
+├── vite.config.ts     → Vite build configuration
+└── README.md          → Project documentation
+```
+
+**Why These Files?**
+- ✅ `.env.example` → Required for onboarding, security (don't commit .env)
+- ✅ `package.json` → npm scripts: dev, build, lint, test
+- ✅ `tsconfig.json` → TypeScript strict mode, path aliases
+- ✅ `vite.config.ts` → Dev server, build optimization
+- ✅ `README.md` → Quick start guide for developers
+
+***
+
+## Comparison: Why This Structure Over Alternatives?
+
+### Option 1: Domain-Based (Recommended ✅)
+```
+src/
+├── routes/         → File-based routing
+├── components/     → Shared UI
+├── context/        → Global state
+├── hooks/          → Reusable logic
+├── api/            → API calls
+├── utils/          → Helpers
+├── types/          → TypeScript
+└── styles/         → CSS
+
+Pros: Clear separation, reusable code, scalable
+Cons: More directories to manage
+VERDICT: ✅ BEST FOR SAIQA
+```
+
+### Option 2: Feature-Based (Not Recommended ❌)
+```
+src/
+├── features/
+│   ├── auth/
+│   │   ├── components/
+│   │   ├── context/
+│   │   ├── api/
+│   │   └── hooks/
+│   ├── users/
+│   │   ├── components/
+│   │   ├── api/
+│   │   └── hooks/
+```
+
+Cons:
+- ❌ Duplicated utils/types/styles per feature
+- ❌ Hard to find shared components
+- ❌ Overkill for small-medium apps
+- ❌ More directories to navigate
+
+### Option 3: Flat Structure (Not Recommended ❌)
+```
+src/
+├── UserList.tsx
+├── UserForm.tsx
+├── Header.tsx
+├── api.ts
+├── utils.ts
+```
+
+Cons:
+- ❌ Becomes chaos as app grows
+- ❌ Hard to find anything
+- ❌ No organization
+- ❌ Violates SRP
+
+***
+
+## File Naming Conventions
+
+### Routes (`.lazy.tsx` - TanStack Start convention)
+- ✅ `index.lazy.tsx` → List page
+- ✅ `create.lazy.tsx` → Create form
+- ✅ `$id.lazy.tsx` → Detail/view page
+- ✅ `$id.edit.lazy.tsx` → Edit form
+- ✅ `__root.tsx` → Root layout (wraps all)
+
+**Why `.lazy.tsx`?**
+- Tells TanStack Start to code-split this route
+- Automatic lazy loading
+- Improves initial page load time
+- Industry standard convention
+
+### Components (`PascalCase.tsx`)
+- ✅ `Header.tsx` → Renders header
+- ✅ `UserList.tsx` → Renders user list
+- ✅ `ProtectedRoute.tsx` → Wrapper component
+
+**Why PascalCase?**
+- React convention for components
+- Distinguished from files (lowercase = non-React)
+- IDE auto-completion works better
+
+### Utilities & Hooks (`camelCase.ts`)
+- ✅ `useAuth.ts` → Custom hook (not `.tsx`)
+- ✅ `rbac.ts` → Utility functions
+- ✅ `validators.ts` → Form validation
+
+**Why camelCase?**
+- Standard JavaScript/TypeScript convention
+- Not a component, just functions
+- Easy to distinguish from components
+
+***
+
+## How Routes Map to URLs
+
+| File Path | URL | Purpose |
+|-----------|-----|---------|
+| `routes/__root.tsx` | (layout) | Wraps all routes |
+| `routes/index.lazy.tsx` | `/` | Dashboard |
+| `routes/login.lazy.tsx` | `/login` | Login page |
+| `routes/profile.lazy.tsx` | `/profile` | User profile |
+| `routes/users/index.lazy.tsx` | `/users` | User list |
+| `routes/users/create.lazy.tsx` | `/users/create` | Create user |
+| `routes/users/$id.lazy.tsx` | `/users/:id` | User detail |
+| `routes/users/$id.edit.lazy.tsx` | `/users/:id/edit` | Edit user |
+| `routes/units/index.lazy.tsx` | `/units` | Unit list |
+| `routes/units/create.lazy.tsx` | `/units/create` | Create unit |
+
+**Deliverable:** Buildable project with no errors, .env configuration working, directory structure as per the guide.
 
 ### 1.2 API Client Setup
 - ✅ Create HTTP client wrapper (axios/fetch with interceptors)
@@ -452,544 +986,7 @@
 **Deliverable:** Comprehensive test report, all scenarios passing
 
 ---
-
-## File Structure & Organization
-
-### Recommended Project Layout
-
-```
-saiqa-client/
-├── src/
-│   ├── app.jsx                          # App entry point
-│   ├── routes/
-│   │   ├── __root.jsx                   # Root layout
-│   │   ├── index.lazy.jsx               # Dashboard
-│   │   ├── login.lazy.jsx               # Login page
-│   │   ├── profile.lazy.jsx             # User profile
-│   │   ├── users/
-│   │   │   ├── index.lazy.jsx           # User list
-│   │   │   ├── $id.lazy.jsx             # User detail
-│   │   │   ├── create.lazy.jsx          # Create user
-│   │   │   ├── $id.edit.lazy.jsx        # Edit user
-│   │   ├── units/
-│   │   │   ├── index.lazy.jsx           # Unit list
-│   │   │   ├── create.lazy.jsx          # Create unit
-│   │   │   ├── $id.edit.lazy.jsx        # Edit unit
-│   │   ├── designations/
-│   │   │   ├── index.lazy.jsx           # Designation list
-│   │   │   ├── create.lazy.jsx          # Create designation
-│   │   │   ├── $id.edit.lazy.jsx        # Edit designation
-│   ├── components/
-│   │   ├── ProtectedRoute.jsx           # Route protection wrapper
-│   │   ├── RoleBasedRoute.jsx           # Role-based route guard
-│   │   ├── Layout.jsx                   # App layout
-│   │   ├── Header.jsx                   # Header component
-│   │   ├── Sidebar.jsx                  # Sidebar navigation
-│   │   ├── AuthLayout.jsx               # Login page layout
-│   │   ├── LoadingSpinner.jsx           # Loading indicator
-│   │   ├── EmptyState.jsx               # Empty data state
-│   │   ├── ErrorBoundary.jsx            # Error fallback
-│   ├── context/
-│   │   ├── AuthContext.jsx              # Authentication context
-│   │   ├── AuthProvider.jsx             # Auth provider wrapper
-│   │   ├── ErrorContext.jsx             # Error notifications
-│   │   ├── ErrorProvider.jsx            # Error provider wrapper
-│   ├── hooks/
-│   │   ├── useAuth.js                   # Auth context hook
-│   │   ├── useError.js                  # Error context hook
-│   │   ├── useFetch.js                  # Data fetching hook
-│   │   ├── useForm.js                   # Form state hook
-│   ├── api/
-│   │   ├── client.js                    # HTTP client setup
-│   │   ├── interceptors.js              # Request/response interceptors
-│   │   ├── endpoints/
-│   │   │   ├── auth.js                  # Auth API calls
-│   │   │   ├── users.js                 # User API calls
-│   │   │   ├── units.js                 # Unit API calls
-│   │   │   ├── designations.js          # Designation API calls
-│   ├── utils/
-│   │   ├── rbac.js                      # Role checking utilities
-│   │   ├── validators.js                # Form validation rules
-│   │   ├── constants.js                 # App constants
-│   │   ├── storage.js                   # Session/localStorage helpers
-│   ├── types/
-│   │   ├── api.js                       # API response types
-│   │   ├── auth.js                      # Auth types
-│   │   ├── user.js                      # User types
-│   │   ├── common.js                    # Common types
-│   ├── styles/
-│   │   ├── globals.css                  # Global styles
-│   │   ├── theme.css                    # Ant Design overrides
-├── .env.example                         # Environment template
-├── package.json
-├── tsconfig.json
-├── vite.config.js
-└── README.md
-```
-
-***
-
-## SAIQA Frontend Directory Structure Justification
-This is a **feature-based, scalable directory structure** designed for React + TanStack Start + Ant Design projects. It prioritizes developer experience, maintainability, and clear separation of concerns.
-
-### 1. **`src/routes/` - File-Based Routing** ✅ BEST FOR TANSTACK START
-
-**Why This Approach?**
-- TanStack Start uses **file-based routing** (like Next.js)
-- Each `.lazy.jsx` file = automatic route
-- No manual route configuration needed
-- Reduces boilerplate significantly
-- Aligns with modern React meta-frameworks
-
-**Structure Explanation:**
-
-```
-routes/
-├── __root.jsx         → "/" (root layout, wraps all routes)
-├── index.lazy.jsx     → "/" (dashboard homepage)
-├── login.lazy.jsx     → "/login" (public, no layout)
-├── profile.lazy.jsx   → "/profile" (authenticated)
-├── users/
-│   ├── index.lazy.jsx → "/users" (list)
-│   ├── $id.lazy.jsx   → "/users/:id" (detail)
-│   ├── create.lazy.jsx → "/users/create" (form)
-│   └── $id.edit.lazy.jsx → "/users/:id/edit" (edit form)
-├── units/             → "/units/*" (mirrored structure)
-└── designations/      → "/designations/*" (mirrored structure)
-```
-
-**Advantages:**
-- ✅ **Automatic routing** - no Router config files needed
-- ✅ **Intuitive** - folder structure matches URL paths
-- ✅ **Nested routes** - users/ folder = /users/... URLs
-- ✅ **Lazy loading** - .lazy.jsx = code-split by default
-- ✅ **Scalable** - add new routes by creating new files
-- ✅ **Clear organization** - each feature in its own folder
-
-**Disadvantages:**
-- ❌ File names matter (must match routes exactly)
-- ❌ Learning curve for new developers
-- ❌ Unusual naming ($id, __root) initially confusing
-
-**Why NOT use `pages/` folder?**
-- Pages pattern is for Next.js, not TanStack Start
-- TanStack Start routing is more explicit with `__root.jsx`
-- `.lazy.jsx` extension makes code-splitting intentions clear
-
-***
-
-### 2. **`src/components/` - Shared UI Components** ✅ CORRECT APPROACH
-
-**Why This Directory?**
-- Holds **reusable UI components** used across multiple routes
-- Not specific to any single feature
-- Can be imported from any route file
-- Keeps code DRY (Don't Repeat Yourself)
-
-**What Goes Here:**
-- **Layout components**: Layout.jsx, Header.jsx, Sidebar.jsx
-- **Route protection**: ProtectedRoute.jsx, RoleBasedRoute.jsx
-- **Shared utilities**: LoadingSpinner.jsx, EmptyState.jsx, ErrorBoundary.jsx
-- **AuthLayout.jsx**: Special layout for login page
-
-**What Does NOT Go Here:**
-- ❌ User-specific components (should be in routes/users/)
-- ❌ Unit-specific components (should be in routes/units/)
-- ❌ Feature-specific logic (should be co-located with route)
-
-**Why This Organization?**
-- Clear separation: shared vs feature-specific
-- Easy to find layout/shared components
-- Prevents duplication across features
-- Proper code reuse
-
-**Example Usage:**
-```javascript
-// In routes/users/index.lazy.jsx
-import { ProtectedRoute } from '@/components/ProtectedRoute'
-import { Layout } from '@/components/Layout'
-
-export default function UserList() {
-  return (
-    <ProtectedRoute>
-      <Layout>
-        {/* User list content */}
-      </Layout>
-    </ProtectedRoute>
-  )
-}
-```
-
-***
-
-### 3. **`src/context/` - Global State Management** ✅ REACT CONTEXT BEST PRACTICE
-
-**Why Context API (not Redux)?**
-- Saiqa needs only 2 global states: Auth + Error
-- Redux adds complexity not needed
-- React Context is sufficient for this scale
-- Less boilerplate, faster development
-
-**Structure:**
-```
-context/
-├── AuthContext.jsx      → Defines auth context & interface
-├── AuthProvider.jsx     → Wraps app with auth context
-├── ErrorContext.jsx     → Defines error notifications context
-└── ErrorProvider.jsx    → Wraps app with error context
-```
-
-**Why Separate Context & Provider?**
-- **Context**: Just the interface (created with createContext)
-- **Provider**: Component that wraps app (supplies context value)
-- **Benefit**: Cleaner, more reusable, follows best practice
-- **Convention**: Makes code more professional
-
-**Usage Pattern:**
-```javascript
-// App.jsx wraps everything
-<AuthProvider>
-  <ErrorProvider>
-    <App />
-  </ErrorProvider>
-</AuthProvider>
-
-// Any component uses it
-const { user, role } = useAuth()
-```
-
-**Why NOT use Redux?**
-- Redux is for complex, multi-level state
-- Saiqa has simple linear state (user, error)
-- Redux adds 5+ new files, boilerplate per feature
-- Context is cleaner, faster development
-
-***
-
-### 4. **`src/hooks/` - Custom React Hooks** ✅ SEPARATION OF CONCERNS
-
-**Why Extract into Hooks?**
-- Hooks encapsulate logic, make it reusable
-- Keep components focused on rendering
-- Easier to test
-- Easier to maintain
-
-**What Goes Here:**
-- `useAuth.js` → Access auth context (role, user, login, logout)
-- `useError.js` → Show/hide error notifications
-- `useFetch.js` → Generic data fetching with loading/error states
-- `useForm.js` → Form state management (optional, can use Ant Form instead)
-
-**Example Usage:**
-```javascript
-// In any component
-const { user, logout } = useAuth()
-const { showError } = useError()
-const { data, loading, error } = useFetch('/api/users')
-```
-
-**Why NOT Inline This Logic?**
-- ❌ Duplicated in multiple components
-- ❌ Harder to test
-- ❌ Violates DRY principle
-- ❌ Makes components harder to read
-
-***
-
-### 5. **`src/api/` - API Communication Layer** ✅ ENCAPSULATION
-
-**Why Separate API Logic?**
-- Centralized HTTP client configuration
-- Request/response interceptors in one place
-- Error handling consistent across app
-- Easy to swap HTTP client (axios → fetch)
-- Easy to add authentication headers
-- Easy to handle token refresh
-
-**Structure:**
-```
-api/
-├── client.js                → Axios instance with base config
-├── interceptors.js          → Request/response middleware
-└── endpoints/
-    ├── auth.js              → /api/auth/* calls
-    ├── users.js             → /api/users/* calls
-    ├── units.js             → /api/units/* calls
-    └── designations.js      → /api/designations/* calls
-```
-
-**Why Organize by Endpoint?**
-- Each file groups related API calls
-- Easy to find auth vs user endpoints
-- Easy to mock for testing
-- Mirrors backend API structure
-
-**Example Usage:**
-```javascript
-// In route
-import { loginUser, logoutUser } from '@/api/endpoints/auth'
-import { getUsers, createUser } from '@/api/endpoints/users'
-
-// Use directly
-const response = await loginUser(email, password)
-```
-
-**Why NOT Make API Calls in Components?**
-- ❌ Duplicated HTTP code across components
-- ❌ Hard to change API base URL
-- ❌ Hard to add global headers
-- ❌ Error handling inconsistent
-- ❌ Hard to test components
-
-***
-
-### 6. **`src/utils/` - Helper Functions** ✅ UTILITY EXTRACTION
-
-**Why This Directory?**
-- Holds **pure functions** that aren't components
-- Reusable across app
-- No React dependency
-- Easy to unit test
-
-**What Goes Here:**
-- `rbac.js` → `isAdmin()`, `isManager()`, `canEditUser()`
-- `validators.js` → Email, password, phone validation rules
-- `constants.js` → ROLE_TYPES, API_ENDPOINTS, MESSAGES
-- `storage.js` → `getToken()`, `setToken()`, `clearToken()`
-
-**Example Usage:**
-```javascript
-// In component
-import { isAdmin, isManager } from '@/utils/rbac'
-import { validateEmail } from '@/utils/validators'
-
-if (isAdmin(user.role)) {
-  showDeleteButton()
-}
-
-if (!validateEmail(email)) {
-  showError('Invalid email')
-}
-```
-
-**Why NOT Inline These?**
-- ❌ Duplicated validation logic
-- ❌ Hard to change rules globally
-- ❌ Makes components harder to read
-- ❌ Harder to test
-
-***
-
-### 7. **`src/types/` - TypeScript Type Definitions** ✅ TYPE SAFETY
-
-**Why Separate Types?**
-- Centralized type definitions
-- Reusable across components
-- Easy to maintain API contracts
-- Self-documenting code
-
-**Structure:**
-```
-types/
-├── api.js          → API response/request types
-├── auth.js         → User, auth-related types
-├── user.js         → User-specific types (UserForm, UserDetail)
-└── common.js       → Shared types (Pagination, ErrorResponse)
-```
-
-**Example Types:**
-```javascript
-// api.js
-export type ApiResponse<T> = {
-  data: T
-  error?: string
-  status: number
-}
-
-// auth.js
-export type User = {
-  id: string
-  email: string
-  role: 'admin' | 'manager' | 'user'
-  firstName: string
-  lastName: string
-}
-```
-
-**Why NOT Inline Types?**
-- ❌ Repeated across files
-- ❌ Hard to maintain consistency
-- ❌ Changes require finding all usages
-- ❌ Harder to understand API contract
-
-***
-
-### 8. **`src/styles/` - Global & Theme Styles** ✅ CONSISTENT THEMING
-
-**Why Separate Styles?**
-- Global styles in one place
-- Theme overrides centralized
-- Easy to maintain design system
-- Prevents CSS conflicts
-
-**Structure:**
-```
-styles/
-├── globals.css    → Reset, base, global rules
-└── theme.css      → Ant Design overrides (colors, sizes)
-```
-
-**What Goes Here:**
-- ✅ Global reset (margin, padding, font)
-- ✅ Body, html, a tag styles
-- ✅ Ant Design customization
-- ✅ CSS variables for colors/spacing
-
-**What Does NOT Go Here:**
-- ❌ Component-specific styles (use CSS Modules or inline)
-- ❌ Feature-specific styles (keep with feature)
-
-**Why This Approach?**
-- Single source of truth for theming
-- Easy to implement dark mode
-- Consistent across entire app
-- Changes propagate globally
-
-***
-
-### 9. **Root Level Files** ✅ ESSENTIAL CONFIGURATION
-
-```
-├── .env.example       → Template for environment variables
-├── package.json       → Dependencies & scripts
-├── tsconfig.json      → TypeScript configuration
-├── vite.config.js     → Vite build configuration
-└── README.md          → Project documentation
-```
-
-**Why These Files?**
-- ✅ `.env.example` → Required for onboarding, security (don't commit .env)
-- ✅ `package.json` → npm scripts: dev, build, lint, test
-- ✅ `tsconfig.json` → TypeScript strict mode, path aliases
-- ✅ `vite.config.js` → Dev server, build optimization
-- ✅ `README.md` → Quick start guide for developers
-
-***
-
-## Comparison: Why This Structure Over Alternatives?
-
-### Option 1: Domain-Based (Recommended ✅)
-```
-src/
-├── routes/         → File-based routing
-├── components/     → Shared UI
-├── context/        → Global state
-├── hooks/          → Reusable logic
-├── api/            → API calls
-├── utils/          → Helpers
-├── types/          → TypeScript
-└── styles/         → CSS
-
-Pros: Clear separation, reusable code, scalable
-Cons: More directories to manage
-VERDICT: ✅ BEST FOR SAIQA
-```
-
-### Option 2: Feature-Based (Not Recommended ❌)
-```
-src/
-├── features/
-│   ├── auth/
-│   │   ├── components/
-│   │   ├── context/
-│   │   ├── api/
-│   │   └── hooks/
-│   ├── users/
-│   │   ├── components/
-│   │   ├── api/
-│   │   └── hooks/
-```
-
-Cons:
-- ❌ Duplicated utils/types/styles per feature
-- ❌ Hard to find shared components
-- ❌ Overkill for small-medium apps
-- ❌ More directories to navigate
-
-### Option 3: Flat Structure (Not Recommended ❌)
-```
-src/
-├── UserList.jsx
-├── UserForm.jsx
-├── Header.jsx
-├── api.js
-├── utils.js
-```
-
-Cons:
-- ❌ Becomes chaos as app grows
-- ❌ Hard to find anything
-- ❌ No organization
-- ❌ Violates SRP
-
-***
-
-## File Naming Conventions
-
-### Routes (`.lazy.jsx` - TanStack Start convention)
-- ✅ `index.lazy.jsx` → List page
-- ✅ `create.lazy.jsx` → Create form
-- ✅ `$id.lazy.jsx` → Detail/view page
-- ✅ `$id.edit.lazy.jsx` → Edit form
-- ✅ `__root.jsx` → Root layout (wraps all)
-
-**Why `.lazy.jsx`?**
-- Tells TanStack Start to code-split this route
-- Automatic lazy loading
-- Improves initial page load time
-- Industry standard convention
-
-### Components (`PascalCase.jsx`)
-- ✅ `Header.jsx` → Renders header
-- ✅ `UserList.jsx` → Renders user list
-- ✅ `ProtectedRoute.jsx` → Wrapper component
-
-**Why PascalCase?**
-- React convention for components
-- Distinguished from files (lowercase = non-React)
-- IDE auto-completion works better
-
-### Utilities & Hooks (`camelCase.js`)
-- ✅ `useAuth.js` → Custom hook (not `.jsx`)
-- ✅ `rbac.js` → Utility functions
-- ✅ `validators.js` → Form validation
-
-**Why camelCase?**
-- Standard JavaScript convention
-- Not a component, just functions
-- Easy to distinguish from components
-
-***
-
-## How Routes Map to URLs
-
-| File Path | URL | Purpose |
-|-----------|-----|---------|
-| `routes/__root.jsx` | (layout) | Wraps all routes |
-| `routes/index.lazy.jsx` | `/` | Dashboard |
-| `routes/login.lazy.jsx` | `/login` | Login page |
-| `routes/profile.lazy.jsx` | `/profile` | User profile |
-| `routes/users/index.lazy.jsx` | `/users` | User list |
-| `routes/users/create.lazy.jsx` | `/users/create` | Create user |
-| `routes/users/$id.lazy.jsx` | `/users/:id` | User detail |
-| `routes/users/$id.edit.lazy.jsx` | `/users/:id/edit` | Edit user |
-| `routes/units/index.lazy.jsx` | `/units` | Unit list |
-| `routes/units/create.lazy.jsx` | `/units/create` | Create unit |
-
----
-
 ## Development Guidelines for AI Agents
-
 ### Naming Conventions
 - Components: PascalCase (UserList, EditUserForm, ProtectedRoute)
 - Hooks: camelCase with `use` prefix (useAuth, useFetch, useForm)
@@ -998,7 +995,7 @@ Cons:
 - CSS classes: kebab-case (user-list, edit-form, button-primary)
 
 ### API Integration Rules
-- ✅ All API calls go through `api/client.js`
+- ✅ All API calls go through `api/client.ts`
 - ✅ Request/response interception for auth tokens
 - ✅ Consistent error handling (401, 403, 400, 500)
 - ✅ Loading states for all async operations
@@ -1039,6 +1036,19 @@ Cons:
 - ✅ Keep API logic in `api/` directory
 - ✅ Keep utilities in `utils/` directory
 - ✅ Keep types in `types/` directory
+- ✅ Use TypeScript interfaces and types for all props and state
+
+### TypeScript Specific Rules
+- ✅ Define interfaces for all component props
+- ✅ Use TypeScript generics where appropriate
+- ✅ Define return types for all functions
+- ✅ Use `typeof` operator for type inference when possible
+- ✅ Avoid using `any` type unless absolutely necessary
+- ✅ Use union types for enum-like values (e.g., roles, statuses)
+- ✅ Leverage TypeScript's strict mode for better type safety
+- ✅ Use `interface` for object shapes and `type` for aliases
+- ✅ Organize imports alphabetically and group by source (external, internal, types)
+- ✅ Use `as const` for readonly arrays and objects when appropriate
 
 ---
 

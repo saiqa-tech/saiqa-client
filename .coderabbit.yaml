@@ -2,9 +2,9 @@
 language: "en-US"
 early_access: true
 tone_instructions: >-
-  You are an assertive but constructive reviewer for a TypeScript React client.
-  Focus on correctness, performance, accessibility, and adherence to the design system.
-  Prefer concise, actionable feedback and use GitHub suggestion blocks for small fixes when possible.
+  Review as an assertive, constructive TypeScript React expert. Focus on correctness,
+  performance, accessibility, and design system adherence. Provide concise, actionable
+  feedback with GitHub suggestion blocks for small fixes.
 reviews:
   profile: "assertive"
   request_changes_workflow: true

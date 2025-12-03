@@ -20,9 +20,15 @@ export default function AuthLayout({ children, title }: AuthLayoutProps) {
 					background: "#f0f2f5",
 				}}
 			>
-				<Card style={{ width: 400, boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}>
+				<Card
+					style={{
+						width: "100%",
+						maxWidth: 400,
+						boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+					}}
+				>
 					<div style={{ textAlign: "center", marginBottom: 24 }}>
-						<Title level={2} style={{ margin: 0 }}>
+						<Title level={1} style={{ margin: 0 }}>
 							Login
 						</Title>
 						{title && (

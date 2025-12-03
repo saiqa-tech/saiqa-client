@@ -3,6 +3,9 @@ import { Spin } from "antd";
 export default function LoadingSpinner() {
 	return (
 		<div
+			role="status"
+			aria-live="polite"
+			aria-label="Loading content"
 			style={{
 				display: "flex",
 				justifyContent: "center",

@@ -29,6 +29,7 @@ export const getRouter = () => {
 	});
 
 	if (!router.isServer) {
+		// Ensure VITE_SENTRY_DSN is set in your .env file
 		Sentry.init({
 			dsn: import.meta.env.VITE_SENTRY_DSN,
 			integrations: [],

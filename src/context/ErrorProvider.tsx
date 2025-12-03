@@ -1,9 +1,11 @@
 import { message } from "antd";
-import { type ReactNode, useCallback, useState } from "react";
+import { type ReactNode, useCallback, useState, useEffect } from "react";
 import { ErrorContext } from "./ErrorContext";
+import { useAuth } from "../hooks/useAuth";
 
 export function ErrorProvider({ children }: { children: ReactNode }) {
     const [error, setError] = useState<string | null>(null);
+    const { user } = useAuth();
 
     const showError = useCallback((msg: string) => {
         setError(msg);
@@ -13,6 +15,12 @@ export function ErrorProvider({ children }: { children: ReactNode }) {
     const clearError = useCallback(() => {
         setError(null);
     }, []);
+
+    useEffect(() => {
+        if (!user) {
+            clearError();
+        }
+    }, [user, clearError]);
 
     return (
         <ErrorContext.Provider value={{ error, showError, clearError }}>

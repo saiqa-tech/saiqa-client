@@ -23,7 +23,7 @@ export const setOnUnauthorized = (callback: () => void) => {
 };
 
 const client: AxiosInstance = axios.create({
-	baseURL: '/api',//window.location.port === '3000' ? '/api' : `${window.location.protocol}//${window.location.hostname}`,
+	baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
 	timeout: 30000,
 	withCredentials: true, // Important for cookies
 });
@@ -56,7 +56,6 @@ client.interceptors.response.use(
 		// --- Retry Logic for Transient Failures ---
 		if (
 			config &&
-			!config._retryCount &&
 			isTransientError(error) &&
 			(config._retryCount || 0) < MAX_RETRIES
 		) {

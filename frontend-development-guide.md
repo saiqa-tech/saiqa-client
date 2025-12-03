@@ -19,7 +19,7 @@
 ### 1.1 Environment Configuration
 - ✅ Initialize React + TanStack Start + Ant Design 6.0 project
 - ✅ Set environment variables (API_BASE_URL, NODE_ENV)
-- ✅ Use typescript only no javascript
+- ✅ Use TypeScript exclusively (no JavaScript)
 - ✅ Set up .env.example template with required variables
 - ✅ Configure CORS settings for API communication
 
@@ -27,7 +27,7 @@
 
 ### Recommended Project Layout
 
-```
+```plaintext
 saiqa-client/
 ├── src/
 │   ├── app.tsx                          # App entry point

@@ -30,9 +30,8 @@ export default function Header({ collapsed, setCollapsed }: HeaderProps) {
 	const { user, logout } = useAuth();
 	const navigate = useNavigate();
 
-	const handleLogout = () => {
-		logout();
-		navigate({ to: "/login" });
+	const handleLogout = async () => {
+		await logout();
 	};
 
 	const items: MenuProps["items"] = [
@@ -68,6 +67,7 @@ export default function Header({ collapsed, setCollapsed }: HeaderProps) {
 				type="text"
 				icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
 				onClick={() => setCollapsed(!collapsed)}
+				aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
 				style={{
 					fontSize: "16px",
 					width: 64,
@@ -77,7 +77,7 @@ export default function Header({ collapsed, setCollapsed }: HeaderProps) {
 			<div style={{ marginRight: "24px" }}>
 				{user && (
 					<Dropdown menu={{ items }} placement="bottomRight">
-						<Space style={{ cursor: "pointer" }}>
+						<Space style={{ cursor: "pointer" }} role="button" tabIndex={0} aria-label="User menu">
 							<Avatar icon={<UserOutlined />} />
 							<span>
 								{user.firstName} {user.lastName}

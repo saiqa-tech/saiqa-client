@@ -1,5 +1,5 @@
 import { Outlet } from "@tanstack/react-router";
-import { Layout as AntLayout } from "antd";
+import { Layout as AntLayout, theme } from "antd";
 import { useState } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
@@ -8,6 +8,7 @@ const { Content } = AntLayout;
 
 export default function Layout({ children }: { children?: React.ReactNode }) {
 	const [collapsed, setCollapsed] = useState(false);
+	const { token } = theme.useToken();
 
 	return (
 		<AntLayout style={{ minHeight: "100vh" }}>
@@ -19,7 +20,7 @@ export default function Layout({ children }: { children?: React.ReactNode }) {
 						margin: "24px 16px",
 						padding: 24,
 						minHeight: 280,
-						background: "#fff",
+						background: token.colorBgContainer,
 					}}
 				>
 					{children || <Outlet />}

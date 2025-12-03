@@ -1,11 +1,21 @@
 import type { User } from "../../types/auth";
 import client from "../client";
 
-export const login = async (credentials: any) => {
-	return client.post("/auth/login", credentials);
-};
+export interface LoginCredentials {
+	email: string;
+	password: string;
+}
 
-export const logout = async () => {
+export interface ChangePasswordRequest {
+	currentPassword: string;
+	newPassword: string;
+}
+
+export const login = async (credentials: LoginCredentials) => {
+	return client.post("/auth/login", credentials);
+export const changePassword = async (data: ChangePasswordRequest) => {
+	return client.post("/auth/change-password", data);
+};port const logout = async () => {
 	return client.post("/auth/logout");
 };
 

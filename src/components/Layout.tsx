@@ -1,5 +1,6 @@
 import { Outlet } from "@tanstack/react-router";
-import { Layout as AntLayout, theme } from "antd";
+import { theme } from "antd";
+import { Layout as AntLayout } from "@/components/antd-wrappers";
 import { useState } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";

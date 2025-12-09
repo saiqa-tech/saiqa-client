@@ -1,4 +1,4 @@
-import { Modal, Button, Typography } from "antd";
+import { Modal, Button, Typography } from "@/components/antd-wrappers";
 import { useEffect, useState } from "react";
 
 const { Text } = Typography;

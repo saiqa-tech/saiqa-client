@@ -5,6 +5,7 @@ import {
 	UserOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "@tanstack/react-router";
+import { theme } from "antd";
 import {
 	Avatar,
 	Button,
@@ -12,8 +13,7 @@ import {
 	Layout,
 	type MenuProps,
 	Space,
-	theme,
-} from "antd";
+} from "@/components/antd-wrappers";
 import { useAuth } from "../hooks/useAuth";
 
 const { Header: AntHeader } = Layout;

@@ -4,7 +4,7 @@ import {
 	UserOutlined,
 } from "@ant-design/icons";
 import { createFileRoute } from "@tanstack/react-router";
-import { Card, Col, Row, Statistic, Typography } from "antd";
+import { Card, Typography, Col, Row, Statistic } from "@/components/antd-wrappers";
 
 const { Title, Paragraph } = Typography;
 

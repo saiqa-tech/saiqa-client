@@ -3,6 +3,7 @@ import { devtools } from '@tanstack/devtools-vite'
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
+import path from 'path'
 
 const config = defineConfig({
   plugins: [
@@ -15,6 +16,13 @@ const config = defineConfig({
     tanstackStart(),
     viteReact(),
   ],
+  resolve: {
+    alias: {
+      // Alias for using custom AntD wrappers
+      // Comment out this line to use original antd directly
+      // 'antd': path.resolve(__dirname, './src/components/antd-wrappers'),
+    },
+  },
   server: {
     // proxy: {
     //   '/api': {

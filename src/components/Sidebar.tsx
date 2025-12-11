@@ -5,7 +5,7 @@ import {
 	UserOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation } from "@tanstack/react-router";
-import { Layout, Menu } from "antd";
+import { Layout, Menu } from "@/components/antd-wrappers";
 import { useAuth } from "../hooks/useAuth";
 import { canManageUsers } from "../utils/rbac";
 import { useMemo } from "react";

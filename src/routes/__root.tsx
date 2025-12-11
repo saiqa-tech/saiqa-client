@@ -6,15 +6,20 @@ import {
 	Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { App as AntdApp, ConfigProvider } from "antd";
+import { App, ConfigProvider } from "@/components/antd-wrappers";
 
 import { AuthProvider } from "../context/AuthContext";
 import { ErrorProvider } from "../context/ErrorProvider";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import appCss from "../styles.css?url";
+import type { User } from "../types/auth";
 
 interface MyRouterContext {
 	queryClient: QueryClient;
+	auth: {
+		user: User | null;
+		isAuthenticated: boolean;
+	};
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
@@ -50,7 +55,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 			<body>
 				<ConfigProvider>
-					<AntdApp>
+					<App>
 						<AuthProvider>
 							<ErrorProvider>
 								{children}
@@ -69,7 +74,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 							]}
 						/>
 						<Scripts />
-					</AntdApp>
+					</App>
 				</ConfigProvider>
 			</body>
 		</html>

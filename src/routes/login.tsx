@@ -1,6 +1,6 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Alert, Button, Form, Input, message } from "antd";
+import { Alert, Button, Form, Input, message } from "@/components/antd-wrappers";
 import { useState } from "react";
 import { login as apiLogin } from "../api/endpoints/auth";
 import AuthLayout from "../components/AuthLayout";

@@ -1,4 +1,4 @@
-import { Spin } from "antd";
+import { Spin } from "@/components/antd-wrappers";
 
 export default function LoadingSpinner() {
 	return (

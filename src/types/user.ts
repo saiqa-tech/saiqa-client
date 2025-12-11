@@ -5,6 +5,14 @@ export interface UserDetail extends User {
 	updatedAt: string;
 	lastLogin?: string;
 	status: "active" | "inactive";
+	unit?: {
+		id: string;
+		name: string;
+	};
+	designation?: {
+		id: string;
+		title: string;
+	};
 }
 
 export interface CreateUserRequest {
@@ -24,4 +32,17 @@ export interface UpdateUserRequest {
 	unitId?: string;
 	designationId?: string;
 	status?: "active" | "inactive";
+}
+
+export interface ResetPasswordResponse {
+	newPassword: string;
+}
+
+export interface UsersListParams {
+	page: number;
+	limit: number;
+	search?: string;
+	role?: string;
+	unitId?: string;
+	designationId?: string;
 }

@@ -1,4 +1,4 @@
-import { Layout as AntLayout, Card, Typography } from "antd";
+import { Layout as AntLayout, Card, Typography } from "@/components/antd-wrappers";
 import type { ReactNode } from "react";
 
 const { Content } = AntLayout;

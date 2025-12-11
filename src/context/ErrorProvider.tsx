@@ -1,4 +1,4 @@
-import { message as messageApi } from "antd";
+import { message as messageApi } from "@/components/antd-wrappers";
 import { type ReactNode, useCallback, useState, useEffect } from "react";
 import { ErrorContext } from "./ErrorContext";
 import { useAuth } from "../hooks/useAuth";

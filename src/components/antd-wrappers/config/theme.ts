@@ -1,4 +1,5 @@
 import type { ThemeConfig } from 'antd';
+import { theme } from 'antd';
 
 /**
  * Default theme configuration for the application
@@ -39,7 +40,7 @@ export const defaultTheme: ThemeConfig = {
  */
 export const darkTheme: ThemeConfig = {
     ...defaultTheme,
-    algorithm: undefined, // Can be set via ConfigProvider
+    algorithm: theme.darkAlgorithm,
     token: {
         ...defaultTheme.token,
         colorBgBase: '#141414',
@@ -51,10 +52,22 @@ export const darkTheme: ThemeConfig = {
  */
 export const compactTheme: ThemeConfig = {
     ...defaultTheme,
+    algorithm: theme.compactAlgorithm,
     token: {
         ...defaultTheme.token,
         fontSize: 12,
-        controlHeight: 24,
+    },
+    components: {
+        ...defaultTheme.components,
+        Button: {
+            controlHeight: 24,
+        },
+        Input: {
+            controlHeight: 24,
+        },
+        Select: {
+            controlHeight: 24,
+        },
     },
 };
 

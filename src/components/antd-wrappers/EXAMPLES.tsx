@@ -380,7 +380,12 @@ export function MultiStepFormExample() {
 
     const handleNext = async () => {
         try {
-            await form.validateFields();
+            // Validate only fields for the current step
+            const fieldsToValidate = currentStep === 0
+                ? ['firstName', 'lastName', 'email']
+                : ['address', 'city', 'zipCode'];
+
+            await form.validateFields(fieldsToValidate);
             setCurrentStep(currentStep + 1);
         } catch (error) {
             message.error('Please fill in all required fields');

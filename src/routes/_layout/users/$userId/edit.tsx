@@ -24,6 +24,12 @@ const { Option } = Select;
 
 export const Route = createFileRoute("/_layout/users/$userId/edit")({
     component: EditUserPage,
+    beforeLoad: ({ context }) => {
+        const { user } = context.auth || {};
+        if (!canManageUsers(user)) {
+            throw new Error('Unauthorized: You do not have permission to edit users');
+        }
+    },
 });
 
 function EditUserPage() {
@@ -40,6 +46,7 @@ function EditUserPage() {
     } = useQuery({
         queryKey: ["user", userId],
         queryFn: () => getUser(userId),
+        enabled: canManageUsers(currentUser),
     });
 
     const updateMutation = useMutation({

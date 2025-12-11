@@ -62,8 +62,9 @@ function UserDetailPage() {
   const resetPasswordMutation = useMutation({
     mutationFn: () => resetPassword(userId),
     onSuccess: (response: any) => {
+      const newPassword = response.data.newPassword;
       message.success(
-        `Password reset successfully. New password: ${response.data.newPassword}`,
+        `Password reset successfully. New password: ${newPassword}`,
         10,
       );
       setResetModalVisible(false);
@@ -86,6 +87,7 @@ function UserDetailPage() {
   };
 
   const handleResetPassword = () => {
+    // Password is generated on the server
     resetPasswordMutation.mutate();
   };
 

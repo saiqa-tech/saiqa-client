@@ -15,6 +15,7 @@ import {
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { getUsers } from "@/api/endpoints/users";
 import { useAuth } from "@/hooks/useAuth";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { canManageUsers } from "@/utils/rbac";
 import type { UserDetail } from "@/types/user";
 import type { ColumnsType } from "antd/es/table";
@@ -34,17 +35,20 @@ function UsersListPage() {
     const [search, setSearch] = useState("");
     const [roleFilter, setRoleFilter] = useState<string | undefined>(undefined);
 
+    // Debounce search input to reduce API calls
+    const debouncedSearch = useDebouncedValue(search, 300);
+
     const {
         data: response,
         isLoading,
         error,
     } = useQuery({
-        queryKey: ["users", page, limit, search, roleFilter],
+        queryKey: ["users", page, limit, debouncedSearch, roleFilter],
         queryFn: () =>
             getUsers({
                 page,
                 limit,
-                search: search || undefined,
+                search: debouncedSearch || undefined,
                 role: roleFilter,
             }),
     });

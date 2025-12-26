@@ -1,4 +1,4 @@
-import { message } from "antd";
+import { message } from "@/components/antd-wrappers";
 import axios, {
 	type AxiosError,
 	type AxiosInstance,

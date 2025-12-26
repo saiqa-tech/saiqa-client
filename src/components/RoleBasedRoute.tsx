@@ -1,4 +1,4 @@
-import { Button, Result } from "antd";
+import { Result, Button } from "@/components/antd-wrappers";
 import { useAuth } from "../hooks/useAuth";
 import type { User } from "../types/auth";
 import { Link } from "@tanstack/react-router";
